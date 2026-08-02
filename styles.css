@@ -1,5 +1,6 @@
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eef2f3; padding: 15px; margin: 0; }
-.app-container { max-width: 600px; margin: auto; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eef2f3; padding: 0 0 15px 0; margin: 0; }
+.app-container, .auth-box { max-width: 600px; margin: auto; padding: 0 15px; }
+.auth-box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 50px; }
 h2 { color: #1e3c72; text-align: center; margin-bottom: 5px; }
 #clock { text-align: center; color: #666; font-size: 13px; margin-bottom: 15px; }
 .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -7,9 +8,16 @@ input { width: 100%; padding: 10px; margin: 5px 0 10px 0; box-sizing: border-box
 .row { display: flex; gap: 10px; }
 button { width: 100%; padding: 12px; background: #1e3c72; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px; }
 button:hover { background: #2a5298; }
-#pdfBtn { background: #28a745; margin-bottom: 15px; }
-#pdfBtn:hover { background: #218838; }
+.header-bar { display: flex; justify-content: space-between; align-items: center; }
+#logoutBtn { width: auto; padding: 6px 12px; background: #dc3545; font-size: 12px; }
+.action-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
+#pdfBtn { background: #28a745; }
+#resetAllBtn { background: #dc3545; }
 .summary { display: flex; justify-content: space-around; font-size: 16px; background: #1e3c72; color: white; }
 table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
 th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
 th { background: #f8f9fa; }
+.toast { background: #333; color: white; padding: 12px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.toast button { width: auto; padding: 5px 10px; background: #ffc107; color: black; }
+.edit-btn { background: #ffc107; color: black; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; margin-right: 4px; }
+.del-btn { background: #dc3545; color: white; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; }
