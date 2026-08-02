@@ -22,10 +22,12 @@
         <h2 id="authTitle">Login to Khata</h2>
         <form id="authForm">
             <input type="email" id="authEmail" placeholder="Email Address" required>
-            <input type="password" id="authPassword" placeholder="Password (Min 6 chars)" required>
+            <input type="password" id="authPassword" placeholder="Password (Min 6 characters)" required>
             <button type="submit" id="authBtn">Sign In</button>
         </form>
-        <p id="toggleAuth">Account nahi hai? <a href="#" id="switchAuth">Sign Up karein</a></p>
+        <p id="toggleAuth" style="text-align: center; margin-top: 15px; font-size: 14px;">
+            Don't have an account? <a href="#" id="switchAuth">Sign Up</a>
+        </p>
     </div>
 
     <!-- MAIN APP SECTION -->
@@ -38,13 +40,13 @@
 
         <!-- Undo Notification Bar -->
         <div id="undoToast" class="toast" style="display: none;">
-            <span>Entry delete ho gayi hai.</span>
+            <span>Entry has been deleted.</span>
             <button onclick="undoDelete()">↩️ Undo Delete</button>
         </div>
 
         <!-- Entry Form -->
         <div class="card">
-            <h3 id="formTitle">Nayi Entry Karein</h3>
+            <h3 id="formTitle">Add New Entry</h3>
             <form id="khataForm">
                 <input type="hidden" id="editId">
                 <input type="text" id="itemName" placeholder="Item Name (e.g. Ice Cream Box)" required>
@@ -72,7 +74,7 @@
 
         <!-- Table -->
         <div class="card">
-            <h3>Today Khata Log</h3>
+            <h3>Today's Khata Log</h3>
             <div style="overflow-x: auto;">
                 <table border="1" width="100%">
                     <thead>
