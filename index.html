@@ -41,6 +41,11 @@
         </div>
         <p id="clock"></p>
 
+        <!-- PWA Install / Download App Button -->
+        <div id="installContainer" style="display: none; margin-bottom: 15px;">
+            <button id="installAppBtn" style="background: #2ec4b6; width: 100%; font-weight: bold;">📲 Download & Install App</button>
+        </div>
+
         <!-- Undo Notification Bar -->
         <div id="undoToast" class="toast" style="display: none;">
             <span>Entry has been deleted.</span>
@@ -55,8 +60,8 @@
                 <input type="text" id="itemName" placeholder="Item Name (e.g. Ice Cream Box)" required>
                 <input type="text" id="desc" placeholder="Description / Customer Name" required>
                 <div class="row">
-                    <input type="number" id="price" step="0.01" placeholder="Total Price" required>
-                    <input type="number" id="paid" step="0.01" placeholder="Amount Paid" required>
+                    <input type="number" id="price" step="0.001" placeholder="Total Price (Blank = 0)">
+                    <input type="number" id="paid" step="0.001" placeholder="Amount Paid (Blank = 0)">
                 </div>
                 <button type="submit" id="saveBtn">➕ Save & Sync Entry</button>
                 <button type="button" id="cancelEditBtn" style="display:none; background:#6c757d; margin-top:5px;">Cancel Edit</button>
@@ -65,9 +70,9 @@
 
         <!-- Total Balance Sheet -->
         <div class="card summary">
-            <div>Total: <b id="totalPrice">$0.00</b></div>
-            <div>Paid: <b id="totalPaid" style="color:#2ec4b6;">$0.00</b></div>
-            <div>Balance: <b id="totalBalance" style="color:#ff9f1c;">$0.00</b></div>
+            <div>Total: <b id="totalPrice">BD 0.000</b></div>
+            <div>Paid: <b id="totalPaid" style="color:#2ec4b6;">BD 0.000</b></div>
+            <div>Balance: <b id="totalBalance" style="color:#ff9f1c;">BD 0.000</b></div>
         </div>
 
         <div class="action-buttons">
