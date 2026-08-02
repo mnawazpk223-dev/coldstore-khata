@@ -31,47 +31,91 @@
         </header>
 
         <main>
-            <!-- Original Entry Form Section -->
-            <section id="entry-form-section">
-                <h2>Add New Entry</h2>
-                <form id="entry-form">
+            <!-- Authentication Section (Login / Sign Up) -->
+            <section id="auth-section">
+                <div class="auth-tabs">
+                    <button id="show-login-btn" class="tab-btn active">Login</button>
+                    <button id="show-signup-btn" class="tab-btn">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form">
+                    <h2>Login to Your Account</h2>
                     <div class="input-group">
-                        <label for="customer-name">Customer Name</label>
-                        <input type="text" id="customer-name" placeholder="Enter customer name" required>
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="Enter your email" required>
                     </div>
                     <div class="input-group">
-                        <label for="item-desc">Item Description</label>
-                        <input type="text" id="item-desc" placeholder="Item name / details" required>
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" id="login-btn">Login</button>
+                </form>
+
+                <!-- Sign Up Form (Initially hidden or toggled via JS) -->
+                <form id="signup-form" class="auth-form" style="display: none;">
+                    <h2>Create New Account</h2>
+                    <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email" required>
                     </div>
                     <div class="input-group">
-                        <label for="amount">Amount (BHD)</label>
-                        <input type="number" id="amount" placeholder="0.000" step="0.001" required>
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="Create password" required>
                     </div>
-                    <button type="submit" id="add-btn">Add Entry</button>
+                    <button type="submit" id="signup-btn">Sign Up</button>
                 </form>
             </section>
 
-            <!-- Original Records & Transactions Section -->
-            <section id="records-section">
-                <h2>Transactions & Balances</h2>
-                <div class="filter-container">
-                    <input type="text" id="search-box" placeholder="Search by name...">
+            <!-- Dashboard / Khata Section (Aapka Main App Content jo Login ke baad show hota hai) -->
+            <section id="app-dashboard" style="display: none;">
+                <div class="user-info-bar">
+                    <span id="user-email-display"></span>
+                    <button id="logout-btn">Logout</button>
                 </div>
-                <div class="table-container">
-                    <table id="khata-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body">
-                            <!-- JavaScript data rows will load here -->
-                        </tbody>
-                    </table>
+
+                <!-- Entry Form Section -->
+                <div id="entry-form-section">
+                    <h2>Add New Entry</h2>
+                    <form id="entry-form">
+                        <div class="input-group">
+                            <label for="customer-name">Customer Name</label>
+                            <input type="text" id="customer-name" placeholder="Enter customer name" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="item-desc">Item Description</label>
+                            <input type="text" id="item-desc" placeholder="Item name / details" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="amount">Amount (BHD)</label>
+                            <input type="number" id="amount" placeholder="0.000" step="0.001" required>
+                        </div>
+                        <button type="submit" id="add-btn">Add Entry</button>
+                    </form>
+                </div>
+
+                <!-- Records & Transactions Section -->
+                <div id="records-section">
+                    <h2>Transactions & Balances</h2>
+                    <div class="filter-container">
+                        <input type="text" id="search-box" placeholder="Search by name...">
+                    </div>
+                    <div class="table-container">
+                        <table id="khata-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         </main>
@@ -79,17 +123,5 @@
 
     <!-- Main JavaScript File -->
     <script type="module" src="app.js"></script>
-
-    <!-- OneSignal Prompt Script -->
-    <script>
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        window.OneSignalDeferred.push(async function(OneSignal) {
-            try {
-                await OneSignal.Slidedown.promptPush();
-            } catch (error) {
-                console.log("Notification prompt already handled.");
-            }
-        });
-    </script>
 </body>
 </html>
