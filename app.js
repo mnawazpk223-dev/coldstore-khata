@@ -10,11 +10,8 @@ const firebaseConfig = {
     measurementId: "G-X3G1EEZ4N8"
 };
 
-// Initialize Firebase safely
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
+// Initialize Firebase v8
+firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database().ref('khata_entries');
 
