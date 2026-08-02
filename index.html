@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cold Store Daily Khata</title>
     
-    <!-- PWA Manifest & Meta Tags -->
     <meta name="theme-color" content="#2563eb">
-    <link rel="icon" href="data:,"> <!-- 404 Favicon error bachne ke liye -->
+    <link rel="icon" href="data:,">
     
     <!-- CSS Stylesheet -->
     <link rel="stylesheet" href="styles.css">
@@ -19,6 +18,7 @@
       window.OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "16cdacd4-3e90-49ff-8d12-fa652c07e49c",
+          // Yeh option screen par notification bell icon dikhata hai taaki user subscribe kar sake
           notifyButton: {
             enable: true,
           },
@@ -37,27 +37,26 @@
         <main>
             <section id="entry-form-section">
                 <h2>Add New Entry</h2>
-                <!-- Form inputs yahan honge -->
             </section>
 
             <section id="records-section">
                 <h2>Transactions & Balances</h2>
-                <!-- Records list yahan show hogi -->
             </section>
         </main>
     </div>
 
-    <!-- Main JavaScript File with Module Type -->
+    <!-- Main JavaScript File -->
     <script type="module" src="app.js"></script>
-    
+
+    <!-- Automatic Permission Prompt Script -->
     <script>
-        // OneSignal Automatic Prompt Trigger
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         window.OneSignalDeferred.push(async function(OneSignal) {
             try {
+                // Yeh user ke samne notification allow karne ka pop-up laaye ga
                 await OneSignal.Slidedown.promptPush();
             } catch (error) {
-                console.log("Notification prompt handled or already granted.");
+                console.log("Notification prompt already handled.");
             }
         });
     </script>
