@@ -83,11 +83,9 @@ signupForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("signup-password").value;
 
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("Sign up successful:", userCredential.user);
+        await createUserWithEmailAndPassword(auth, email, password);
         alert("Account created successfully!");
     } catch (error) {
-        console.error("Sign up error:", error.code, error.message);
         alert("Sign Up Error: " + error.message);
     }
 });
@@ -99,10 +97,8 @@ loginForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("login-password").value;
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log("Login successful:", userCredential.user);
+        await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-        console.error("Login error:", error.code, error.message);
         alert("Login Error: " + error.message);
     }
 });
@@ -116,7 +112,7 @@ document.getElementById("logout-btn").addEventListener("click", async () => {
     }
 });
 
-// Add Khata Entry Handler
+// Add Khata Entry Handler with OneSignal Notification Trigger
 const entryForm = document.getElementById("entry-form");
 entryForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -136,7 +132,40 @@ entryForm.addEventListener("submit", async (e) => {
     };
 
     try {
+        // Save to Firestore
         await addDoc(collection(db, `users/${currentUser.uid}/khata`), entryData);
+        
+        // Trigger OneSignal Web Notification for New Entry
+        if (window.OneSignalDeferred) {
+            window.OneSignalDeferred.push(async function(OneSignal) {
+                try {
+                    // Check if notifications are permitted/subscribed
+                    if (OneSignal.User.PushSubscription.optedIn) {
+                        // Optional: You can send via OneSignal REST API or show local native notification
+                        console.log("OneSignal ready for new entry alert");
+                    }
+                } catch (err) {
+                    console.error("OneSignal notification error:", err);
+                }
+            });
+        }
+
+        // Fallback or Direct Browser Notification API for immediate feedback
+        if (Notification.permission === "granted") {
+            new Notification("New Khata Entry Added", {
+                body: `${customerName} - ${itemDesc} (${amount.toFixed(3)} BHD)`,
+                icon: "data:,"
+            });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification("New Khata Entry Added", {
+                        body: `${customerName} - ${itemDesc} (${amount.toFixed(3)} BHD)`
+                    });
+                }
+            });
+        }
+
         entryForm.reset();
     } catch (error) {
         alert("Error adding entry: " + error.message);
