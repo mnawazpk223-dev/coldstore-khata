@@ -46,6 +46,7 @@ const signupForm = document.getElementById("signup-form");
 const authSection = document.getElementById("auth-section");
 const appDashboard = document.getElementById("app-dashboard");
 const userEmailDisplay = document.getElementById("user-email-display");
+const totalAmountDisplay = document.getElementById("total-amount-display");
 
 if (showLoginBtn && showSignupBtn) {
     showLoginBtn.addEventListener("click", () => {
@@ -145,7 +146,7 @@ entryForm.addEventListener("submit", async (e) => {
             resetFormState();
         } else {
             await addDoc(collection(db, `users/${currentUser.uid}/khata`), entryData);
-            alert("Entry saved successfully!"); // Safe notification alert replacing direct browser notification constructor
+            alert("Entry saved successfully!");
         }
         entryForm.reset();
     } catch (error) {
@@ -170,9 +171,19 @@ function loadKhataData(uid) {
     
     onSnapshot(q, (snapshot) => {
         allTransactions = [];
+        let grandTotal = 0;
+        
         snapshot.forEach((docSnap) => {
-            allTransactions.push({ id: docSnap.id, ...docSnap.data() });
+            const data = docSnap.data();
+            allTransactions.push({ id: docSnap.id, ...data });
+            grandTotal += Number(data.amount || 0);
         });
+
+        // Update Total Amount Card Display
+        if (totalAmountDisplay) {
+            totalAmountDisplay.innerText = `${grandTotal.toFixed(3)} BHD`;
+        }
+
         renderTable(allTransactions);
     });
 }
@@ -292,7 +303,6 @@ window.addEventListener("beforeinstallprompt", (e) => {
 
 installBtn?.addEventListener("click", async () => {
     if (!deferredPrompt) return;
-    deferredPrompt.progress?.();
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === "accepted") {
