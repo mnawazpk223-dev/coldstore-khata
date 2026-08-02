@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cold Store Khata</title>
+    
+    <!-- PWA & Mobile Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3c72">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cold Store Khata">
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="data:,">
     
@@ -41,9 +49,9 @@
         </div>
         <p id="clock"></p>
 
-        <!-- PWA Install / Download App Button -->
-        <div id="installContainer" style="display: none; margin-bottom: 15px;">
-            <button id="installAppBtn" style="background: #2ec4b6; width: 100%; font-weight: bold;">📲 Download & Install App</button>
+        <!-- PWA Install / Download App Button (Visible to all users for manual/automatic install) -->
+        <div id="installContainer" style="margin-bottom: 15px;">
+            <button id="installAppBtn" style="background: #2ec4b6; color: #fff; width: 100%; font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer;">📲 Download & Install App</button>
         </div>
 
         <!-- Undo Notification Bar -->
