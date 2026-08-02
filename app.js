@@ -145,13 +145,7 @@ entryForm.addEventListener("submit", async (e) => {
             resetFormState();
         } else {
             await addDoc(collection(db, `users/${currentUser.uid}/khata`), entryData);
-            
-            if (Notification.permission === "granted") {
-                new Notification("New Khata Entry Added", {
-                    body: `${customerName} - ${itemDesc} (${amount.toFixed(3)} BHD)`,
-                    icon: "https://cdn-icons-png.flaticon.com/512/2910/2910791.png"
-                });
-            }
+            alert("Entry saved successfully!"); // Safe notification alert replacing direct browser notification constructor
         }
         entryForm.reset();
     } catch (error) {
@@ -298,6 +292,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
 
 installBtn?.addEventListener("click", async () => {
     if (!deferredPrompt) return;
+    deferredPrompt.progress?.();
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === "accepted") {
