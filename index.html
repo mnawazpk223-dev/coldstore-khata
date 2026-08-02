@@ -12,6 +12,9 @@
     <!-- CSS Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 
+    <!-- jsPDF Library for PDF Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <!-- OneSignal Web SDK -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
@@ -78,15 +81,16 @@
                 <div class="user-info-bar">
                     <span id="user-email-display"></span>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <button id="install-btn" class="install-btn" style="display: none;">📲 Install App</button>
+                        <button id="install-btn" class="install-btn" style="display: none;">📲 Install</button>
                         <button id="logout-btn" class="logout-btn">Logout</button>
                     </div>
                 </div>
 
-                <!-- Entry Form Section -->
+                <!-- Entry Form Section (Supports Add & Edit) -->
                 <div id="entry-form-section" class="samsung-card">
-                    <h2>Add New Entry</h2>
+                    <h2 id="form-title">Add New Entry</h2>
                     <form id="entry-form">
+                        <input type="hidden" id="edit-entry-id">
                         <div class="input-group">
                             <label for="customer-name">Customer Name</label>
                             <input type="text" id="customer-name" placeholder="Enter customer name" required>
@@ -99,13 +103,19 @@
                             <label for="amount">Amount (BHD)</label>
                             <input type="number" id="amount" placeholder="0.000" step="0.001" required>
                         </div>
-                        <button type="submit" id="add-btn" class="samsung-btn">Add Entry</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" id="add-btn" class="samsung-btn" style="flex: 2;">Save Entry</button>
+                            <button type="button" id="cancel-edit-btn" class="delete-btn" style="flex: 1; display: none;">Cancel</button>
+                        </div>
                     </form>
                 </div>
 
                 <!-- Records & Transactions Section -->
                 <div id="records-section" class="samsung-card" style="margin-top: 20px;">
-                    <h2>Transactions & Balances</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h2 style="margin: 0;">Transactions</h2>
+                        <button id="download-pdf-btn" class="pdf-btn">📥 Download PDF</button>
+                    </div>
                     <div class="filter-container">
                         <input type="text" id="search-box" placeholder="Search by name...">
                     </div>
