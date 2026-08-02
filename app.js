@@ -4,7 +4,9 @@ import {
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     signOut, 
-    onAuthStateChanged 
+    onAuthStateChanged,
+    setPersistence,
+    browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 import { 
     getDatabase, 
@@ -29,6 +31,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Keep user logged in across sessions/refreshes automatically
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error("Auth persistence error:", error);
+});
+
 const database = getDatabase(app);
 const dbRef = ref(database, 'khata_entries');
 
@@ -45,27 +53,28 @@ const installAppBtn = document.getElementById('installAppBtn');
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    installContainer.style.display = 'block';
+    if(installContainer) installContainer.style.display = 'block';
 });
 
-installAppBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            installContainer.style.display = 'none';
-        }
-        deferredPrompt = null;
-    } else {
-        // iOS or fallback instructions
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            alert("To install on iOS: Tap the Share button (box with arrow) at the bottom of Safari and select 'Add to Home Screen'.");
+if(installAppBtn) {
+    installAppBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installContainer.style.display = 'none';
+            }
+            deferredPrompt = null;
         } else {
-            alert("App is already installed or your browser doesn't support direct installation. Use browser menu to 'Add to Home Screen'.");
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+                alert("To install on iOS: Tap the Share button (box with arrow) at the bottom of Safari and select 'Add to Home Screen'.");
+            } else {
+                alert("App is already installed or your browser doesn't support direct installation. Use browser menu to 'Add to Home Screen'.");
+            }
         }
-    }
-});
+    });
+}
 
 // --- TOGGLE AUTH ---
 const switchAuth = document.getElementById('switchAuth');
@@ -124,7 +133,6 @@ document.getElementById('khataForm').addEventListener('submit', (e) => {
     const item = document.getElementById('itemName').value;
     const desc = document.getElementById('desc').value;
     
-    // Agar field khali ho toh default 0 set ho jaye ga
     let priceInput = document.getElementById('price').value;
     let paidInput = document.getElementById('paid').value;
 
@@ -152,7 +160,7 @@ function resetForm() {
 
 document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
 
-// --- LOAD DATA & TABLE ---
+// --- LOAD DATA & LIVE SYNC ACROSS ALL DEVICES ---
 function loadData() {
     onValue(dbRef, (snapshot) => {
         const tableBody = document.getElementById('tableBody');
