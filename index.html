@@ -24,7 +24,6 @@
 </head>
 <body>
 
-    <!-- Yahan aapka original design aur layout hai -->
     <div class="container">
         <header>
             <h1>Cold Store Daily Khata</h1>
@@ -32,37 +31,45 @@
         </header>
 
         <main>
-            <!-- Entry Form Section -->
+            <!-- Original Entry Form Section -->
             <section id="entry-form-section">
                 <h2>Add New Entry</h2>
                 <form id="entry-form">
-                    <div class="form-group">
-                        <label for="item-name">Item / Party Name:</label>
-                        <input type="text" id="item-name" required placeholder="Enter name">
+                    <div class="input-group">
+                        <label for="customer-name">Customer Name</label>
+                        <input type="text" id="customer-name" placeholder="Enter customer name" required>
                     </div>
-                    <div class="form-group">
-                        <label for="item-amount">Amount (BHD):</label>
-                        <input type="number" id="item-amount" required placeholder="Enter amount">
+                    <div class="input-group">
+                        <label for="item-desc">Item Description</label>
+                        <input type="text" id="item-desc" placeholder="Item name / details" required>
                     </div>
-                    <button type="submit" id="save-btn">Save Entry</button>
+                    <div class="input-group">
+                        <label for="amount">Amount (BHD)</label>
+                        <input type="number" id="amount" placeholder="0.000" step="0.001" required>
+                    </div>
+                    <button type="submit" id="add-btn">Add Entry</button>
                 </form>
             </section>
 
-            <!-- Records & Transactions Section -->
+            <!-- Original Records & Transactions Section -->
             <section id="records-section">
                 <h2>Transactions & Balances</h2>
-                <div class="table-responsive">
+                <div class="filter-container">
+                    <input type="text" id="search-box" placeholder="Search by name...">
+                </div>
+                <div class="table-container">
                     <table id="khata-table">
                         <thead>
                             <tr>
                                 <th>Date</th>
                                 <th>Name</th>
+                                <th>Description</th>
                                 <th>Amount</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="table-body">
-                            <!-- Dynamic records yahan show honge -->
+                            <!-- JavaScript data rows will load here -->
                         </tbody>
                     </table>
                 </div>
