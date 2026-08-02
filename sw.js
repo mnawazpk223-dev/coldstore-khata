@@ -1,27 +1,22 @@
-self.addEventListener('install', (e) => {
-    self.skipWaiting();
+importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+    apiKey: "AIzaSyDizPXfz3urzxBJOJ2rEC9LBtLhNK3J6-w",
+    projectId: "coldstorekhata",
+    messagingSenderId: "502742556617",
+    appId: "1:502742556617:web:f46accc9816dc185fa5218"
 });
 
-self.addEventListener('activate', (e) => {
-    return self.clients.claim();
-});
+const messaging = firebase.messaging();
 
-// Yeh listener background mein push notification receive karega
-self.addEventListener('push', (event) => {
-    let data = { title: 'Cold Store Khata', body: 'New entry added to ledger!' };
-    
-    if (event.data) {
-        data = event.data.json();
-    }
-
-    const options = {
-        body: data.body,
+messaging.onBackgroundMessage((payload) => {
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+        body: payload.notification.body,
         icon: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
-        badge: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
-        vibrate: [200, 100, 200]
+        badge: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png'
     };
 
-    event.waitUntil(
-        self.registration.showNotification(data.title, options)
-    );
+    self.registration.showNotification(notificationTitle, notificationOptions);
 });
