@@ -3,114 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cold Store Khata</title>
+    <title>Cold Store Daily Khata</title>
     
-    <!-- PWA & Mobile Settings -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e3c72">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Cold Store Khata">
+    <!-- PWA Manifest & Meta Tags -->
+    <meta name="theme-color" content="#2563eb">
     
+    <!-- CSS Stylesheet Link (Agar alag file hai ya internal style hai) -->
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="data:,">
-    
-    <!-- PDF Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- OneSignal Web SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "16cdacd4-3e90-49ff-8d12-fa652c07e49c",
+          notifyButton: {
+            enable: true, // Screen par bell icon enable karega taaki user notifications subscribe kar sake
+          },
+        });
+      });
+    </script>
 </head>
 <body>
 
-    <!-- RUNNING BANNER (TOP) -->
-    <div style="background: #1e3c72; color: #ffffff; padding: 8px 0; font-weight: bold; font-size: 14px; border-bottom: 2px solid #ffc107; text-align: center;">
-        <marquee behavior="scroll" direction="left" scrollamount="6">
-            ✨ Made by ARSALAN KHAN ✨
-        </marquee>
-    </div>
+    <div class="container">
+        <header>
+            <h1>Cold Store Daily Khata</h1>
+            <p>Bahrain Market Daily Bookkeeping</p>
+        </header>
 
-    <!-- PWA Install / Download App Button (Always Visible on Top) -->
-    <div id="installContainer" style="max-width: 450px; margin: 15px auto; padding: 0 15px;">
-        <button id="installAppBtn" style="background: #2ec4b6; color: #fff; width: 100%; font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📲 Download & Install App</button>
-    </div>
+        <!-- App UI / Main Content Section -->
+        <main>
+            <section id="entry-form-section">
+                <h2>Add New Entry</h2>
+                <!-- Aapka form ya inputs yahan honge -->
+            </section>
 
-    <!-- AUTH SECTION (Login / Sign Up) -->
-    <div id="authContainer" class="auth-box">
-        <h2 id="authTitle">Login to Khata</h2>
-        <form id="authForm">
-            <input type="email" id="authEmail" placeholder="Email Address" required>
-            <input type="password" id="authPassword" placeholder="Password (Min 6 characters)" required>
-            <button type="submit" id="authBtn">Sign In</button>
-        </form>
-        <p id="toggleAuth" style="text-align: center; margin-top: 15px; font-size: 14px;">
-            Don't have an account? <a href="#" id="switchAuth">Sign Up</a>
-        </p>
-    </div>
-
-    <!-- MAIN APP SECTION -->
-    <div id="appContainer" class="app-container" style="display: none;">
-        <div class="header-bar" style="margin-top: 15px;">
-            <h2>❄️ Cold Store Daily Khata</h2>
-            <button id="logoutBtn">Logout</button>
-        </div>
-        <p id="clock"></p>
-
-        <!-- Undo Notification Bar -->
-        <div id="undoToast" class="toast" style="display: none;">
-            <span>Entry has been deleted.</span>
-            <button id="undoBtn">↩️ Undo Delete</button>
-        </div>
-
-        <!-- Entry Form -->
-        <div class="card">
-            <h3 id="formTitle">Add New Entry</h3>
-            <form id="khataForm">
-                <input type="hidden" id="editId">
-                <input type="text" id="itemName" placeholder="Item Name (e.g. Ice Cream Box)" required>
-                <input type="text" id="desc" placeholder="Description / Customer Name" required>
-                <div class="row">
-                    <input type="number" id="price" step="0.001" placeholder="Total Price (Blank = 0)">
-                    <input type="number" id="paid" step="0.001" placeholder="Amount Paid (Blank = 0)">
-                </div>
-                <button type="submit" id="saveBtn">➕ Save & Sync Entry</button>
-                <button type="button" id="cancelEditBtn" style="display:none; background:#6c757d; margin-top:5px;">Cancel Edit</button>
-            </form>
-        </div>
-
-        <!-- Total Balance Sheet -->
-        <div class="card summary">
-            <div>Total: <b id="totalPrice">BD 0.000</b></div>
-            <div>Paid: <b id="totalPaid" style="color:#2ec4b6;">BD 0.000</b></div>
-            <div>Balance: <b id="totalBalance" style="color:#ff9f1c;">BD 0.000</b></div>
-        </div>
-
-        <div class="action-buttons">
-            <button id="pdfBtn">📄 Download PDF</button>
-            <button id="resetAllBtn">⚠️ Reset All Khata</button>
-        </div>
-
-        <!-- Table -->
-        <div class="card">
-            <h3>Today's Khata Log</h3>
-            <div style="overflow-x: auto;">
-                <table border="1" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Date/Time</th>
-                            <th>Item</th>
-                            <th>Details</th>
-                            <th>Price</th>
-                            <th>Paid</th>
-                            <th>Balance</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
+            <section id="records-section">
+                <h2>Transactions & Balances</h2>
+                <!-- Records list yahan show hogi -->
+            </section>
+        </main>
     </div>
 
     <!-- Main JavaScript File -->
-    <script type="module" src="app.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // OneSignal Automatic Prompt Trigger on App Load
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            try {
+                await OneSignal.Slidedown.promptPush();
+            } catch (error) {
+                console.log("Notification prompt handled or already granted.");
+            }
+        });
+    </script>
 </body>
 </html>
