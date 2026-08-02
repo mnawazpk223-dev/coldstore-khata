@@ -12,7 +12,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db = firebase.database('https://coldstorekhata-default-rtdb.firebaseio.com').ref('khata_entries');
+const db = firebase.database().ref('khata_entries');
 
 let isSignUp = false;
 let lastDeletedEntry = null;
