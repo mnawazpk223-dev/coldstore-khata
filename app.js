@@ -19,7 +19,7 @@ import {
 const firebaseConfig = {
     apiKey: "AIzaSyDizPXfz3urzxBJOJ2rEC9LBtLhNK3J6-w",
     authDomain: "coldstorekhata.firebaseapp.com",
-    databaseURL: "https://coldstorekhata-default-rtdb.firebaseio.com",
+    databaseURL: "https://coldstorekhata-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "coldstorekhata",
     storageBucket: "coldstorekhata.firebasestorage.app",
     messagingSenderId: "502742556617",
@@ -156,7 +156,6 @@ function loadData() {
         document.getElementById('totalPaid').innerText = `$${tPaid.toFixed(2)}`;
         document.getElementById('totalBalance').innerText = `$${tBal.toFixed(2)}`;
 
-        // Attach event listeners to dynamic edit/delete buttons
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
