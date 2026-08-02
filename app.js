@@ -1,3 +1,22 @@
+// Import Firebase functions from CDN modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    signOut, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { 
+    getDatabase, 
+    ref, 
+    push, 
+    set, 
+    update, 
+    remove, 
+    onValue 
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
 // Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyDizPXfz3urzxBJOJ2rEC9LBtLhNK3J6-w",
@@ -10,10 +29,11 @@ const firebaseConfig = {
     measurementId: "G-X3G1EEZ4N8"
 };
 
-// Initialize Firebase v8
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database().ref('khata_entries');
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+const dbRef = ref(database, 'khata_entries');
 
 let isSignUp = false;
 let lastDeletedEntry = null;
@@ -22,32 +42,37 @@ let allData = [];
 
 // --- LOGIN / SIGN UP TOGGLE ---
 const switchAuth = document.getElementById('switchAuth');
-switchAuth.addEventListener('click', (e) => {
-    e.preventDefault();
-    isSignUp = !isSignUp;
-    document.getElementById('authTitle').innerText = isSignUp ? "Sign Up for Khata" : "Login to Khata";
-    document.getElementById('authBtn').innerText = isSignUp ? "Create Account" : "Sign In";
-    switchAuth.innerText = isSignUp ? "Login" : "Sign Up";
-    document.getElementById('toggleAuth').firstChild.textContent = isSignUp ? "Already have an account? " : "Don't have an account? ";
-});
+if(switchAuth) {
+    switchAuth.addEventListener('click', (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        document.getElementById('authTitle').innerText = isSignUp ? "Sign Up for Khata" : "Login to Khata";
+        document.getElementById('authBtn').innerText = isSignUp ? "Create Account" : "Sign In";
+        switchAuth.innerText = isSignUp ? "Login" : "Sign Up";
+        document.getElementById('toggleAuth').firstChild.textContent = isSignUp ? "Already have an account? " : "Don't have an account? ";
+    });
+}
 
 // --- AUTH SUBMIT HANDLER ---
-document.getElementById('authForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('authEmail').value;
-    const pass = document.getElementById('authPassword').value;
+const authForm = document.getElementById('authForm');
+if(authForm) {
+    authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('authEmail').value;
+        const pass = document.getElementById('authPassword').value;
 
-    if (isSignUp) {
-        auth.createUserWithEmailAndPassword(email, pass)
-            .then(() => alert("Account created successfully! You are now logged in."))
-            .catch(err => alert(err.message));
-    } else {
-        auth.signInWithEmailAndPassword(email, pass)
-            .catch(err => alert(err.message));
-    }
-});
+        if (isSignUp) {
+            createUserWithEmailAndPassword(auth, email, pass)
+                .then(() => alert("Account created successfully! You are now logged in."))
+                .catch(err => alert(err.message));
+        } else {
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch(err => alert(err.message));
+        }
+    });
+}
 
-auth.onAuthStateChanged((user) => {
+onAuthStateChanged(auth, (user) => {
     if (user) {
         document.getElementById('authContainer').style.display = 'none';
         document.getElementById('appContainer').style.display = 'block';
@@ -58,8 +83,8 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
-function logout() {
-    auth.signOut();
+window.logout = function() {
+    signOut(auth);
 }
 
 // --- CLOCK ---
@@ -69,27 +94,31 @@ setInterval(() => {
 }, 1000);
 
 // --- ADD / EDIT ENTRY ---
-document.getElementById('khataForm').addEventListener('submit', (e) => {
-    e.preventDefault();
+const khataForm = document.getElementById('khataForm');
+if(khataForm) {
+    khataForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    const editId = document.getElementById('editId').value;
-    const item = document.getElementById('itemName').value;
-    const desc = document.getElementById('desc').value;
-    const price = parseFloat(document.getElementById('price').value);
-    const paid = parseFloat(document.getElementById('paid').value);
-    const balance = price - paid;
-    const time = new Date().toLocaleString();
+        const editId = document.getElementById('editId').value;
+        const item = document.getElementById('itemName').value;
+        const desc = document.getElementById('desc').value;
+        const price = parseFloat(document.getElementById('price').value);
+        const paid = parseFloat(document.getElementById('paid').value);
+        const balance = price - paid;
+        const time = new Date().toLocaleString();
 
-    if (editId) {
-        db.child(editId).update({ item, desc, price, paid, balance });
-    } else {
-        db.push({ item, desc, price, paid, balance, time });
-    }
+        if (editId) {
+            const itemRef = ref(database, 'khata_entries/' + editId);
+            update(itemRef, { item, desc, price, paid, balance });
+        } else {
+            push(dbRef, { item, desc, price, paid, balance, time });
+        }
 
-    resetForm();
-});
+        resetForm();
+    });
+}
 
-function resetForm() {
+window.resetForm = function() {
     document.getElementById('khataForm').reset();
     document.getElementById('editId').value = '';
     document.getElementById('formTitle').innerText = 'Add New Entry';
@@ -98,7 +127,7 @@ function resetForm() {
 }
 
 // --- EDIT ENTRY FUNCTION ---
-function editEntry(id) {
+window.editEntry = function(id) {
     const itemData = allData.find(d => d.id === id);
     if (itemData) {
         document.getElementById('editId').value = id;
@@ -114,11 +143,12 @@ function editEntry(id) {
 }
 
 // --- DELETE & UNDO SYSTEM ---
-function deleteEntry(id) {
+window.deleteEntry = function(id) {
     const itemData = allData.find(d => d.id === id);
     if (itemData && confirm("Are you sure you want to delete this entry?")) {
         lastDeletedEntry = itemData;
-        db.child(id).remove();
+        const itemRef = ref(database, 'khata_entries/' + id);
+        remove(itemRef);
 
         const toast = document.getElementById('undoToast');
         toast.style.display = 'flex';
@@ -131,29 +161,31 @@ function deleteEntry(id) {
     }
 }
 
-function undoDelete() {
+window.undoDelete = function() {
     if (lastDeletedEntry) {
         const id = lastDeletedEntry.id;
         delete lastDeletedEntry.id;
-        db.child(id).set(lastDeletedEntry);
+        const itemRef = ref(database, 'khata_entries/' + id);
+        set(itemRef, lastDeletedEntry);
         lastDeletedEntry = null;
         document.getElementById('undoToast').style.display = 'none';
     }
 }
 
 // --- RESET ALL DATA SYSTEM ---
-function resetAllData() {
+window.resetAllData = function() {
     if (confirm("⚠️ WARNING: Do you want to clear the entire Khata? This cannot be undone!")) {
         if (confirm("FINAL CONFIRMATION: Delete all entries permanently?")) {
-            db.remove();
+            remove(dbRef);
         }
     }
 }
 
 // --- REALTIME DATABASE SYNC ---
 function loadData() {
-    db.on('value', (snapshot) => {
+    onValue(dbRef, (snapshot) => {
         const tableBody = document.getElementById('tableBody');
+        if(!tableBody) return;
         tableBody.innerHTML = '';
         
         let tPrice = 0, tPaid = 0, tBal = 0;
@@ -195,7 +227,7 @@ function loadData() {
 }
 
 // --- PDF DOWNLOAD ---
-function downloadPDF() {
+window.downloadPDF = function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
@@ -215,7 +247,7 @@ function downloadPDF() {
 
     let totalP = allData.reduce((acc, obj) => acc + obj.price, 0);
     let totalPaid = allData.reduce((acc, obj) => acc + obj.paid, 0);
-    let totalBal = allData.reduce((acc, obj) => acc + obj.balance, 0);
+    let totalBal = allData.reduce((acc, obj) => obj.balance ? acc + obj.balance : acc + (obj.price - obj.paid), 0);
 
     rows.push(['TOTALS', '', '', `$${totalP.toFixed(2)}`, `$${totalPaid.toFixed(2)}`, `$${totalBal.toFixed(2)}`]);
     
