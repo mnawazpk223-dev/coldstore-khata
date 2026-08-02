@@ -7,8 +7,9 @@
     
     <!-- PWA Manifest & Meta Tags -->
     <meta name="theme-color" content="#2563eb">
+    <link rel="icon" href="data:,"> <!-- 404 Favicon error bachne ke liye -->
     
-    <!-- CSS Stylesheet Link (Agar alag file hai ya internal style hai) -->
+    <!-- CSS Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 
     <!-- OneSignal Web SDK -->
@@ -19,7 +20,7 @@
         await OneSignal.init({
           appId: "16cdacd4-3e90-49ff-8d12-fa652c07e49c",
           notifyButton: {
-            enable: true, // Screen par bell icon enable karega taaki user notifications subscribe kar sake
+            enable: true,
           },
         });
       });
@@ -33,11 +34,10 @@
             <p>Bahrain Market Daily Bookkeeping</p>
         </header>
 
-        <!-- App UI / Main Content Section -->
         <main>
             <section id="entry-form-section">
                 <h2>Add New Entry</h2>
-                <!-- Aapka form ya inputs yahan honge -->
+                <!-- Form inputs yahan honge -->
             </section>
 
             <section id="records-section">
@@ -47,10 +47,11 @@
         </main>
     </div>
 
-    <!-- Main JavaScript File -->
-   <script type="module" src="app.js"></script>
+    <!-- Main JavaScript File with Module Type -->
+    <script type="module" src="app.js"></script>
+    
     <script>
-        // OneSignal Automatic Prompt Trigger on App Load
+        // OneSignal Automatic Prompt Trigger
         window.OneSignalDeferred = window.OneSignalDeferred || [];
         window.OneSignalDeferred.push(async function(OneSignal) {
             try {
