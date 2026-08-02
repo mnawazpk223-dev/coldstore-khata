@@ -37,13 +37,14 @@
         </header>
 
         <main>
-            <!-- Authentication Section -->
+            <!-- Authentication Section (Login / Sign Up) -->
             <section id="auth-section">
                 <div class="auth-tabs">
                     <button id="show-login-btn" class="tab-btn active">Login</button>
                     <button id="show-signup-btn" class="tab-btn">Sign Up</button>
                 </div>
 
+                <!-- Login Form -->
                 <form id="login-form" class="auth-form">
                     <h2>Welcome Back</h2>
                     <div class="input-group">
@@ -57,6 +58,7 @@
                     <button type="submit" id="login-btn" class="samsung-btn">Login</button>
                 </form>
 
+                <!-- Sign Up Form -->
                 <form id="signup-form" class="auth-form" style="display: none;">
                     <h2>Create Account</h2>
                     <div class="input-group">
@@ -75,13 +77,13 @@
             <section id="app-dashboard" style="display: none;">
                 <div class="user-info-bar">
                     <span id="user-email-display"></span>
-                    <div style="display: flex; gap: 8px;">
-                        <!-- Install App Button -->
+                    <div style="display: flex; gap: 8px; align-items: center;">
                         <button id="install-btn" class="install-btn" style="display: none;">📲 Install App</button>
                         <button id="logout-btn" class="logout-btn">Logout</button>
                     </div>
                 </div>
 
+                <!-- Entry Form Section -->
                 <div id="entry-form-section" class="samsung-card">
                     <h2>Add New Entry</h2>
                     <form id="entry-form">
@@ -101,6 +103,7 @@
                     </form>
                 </div>
 
+                <!-- Records & Transactions Section -->
                 <div id="records-section" class="samsung-card" style="margin-top: 20px;">
                     <h2>Transactions & Balances</h2>
                     <div class="filter-container">
@@ -118,6 +121,7 @@
                                 </tr>
                             </thead>
                             <tbody id="table-body">
+                                <!-- Data rows -->
                             </tbody>
                         </table>
                     </div>
@@ -126,6 +130,7 @@
         </main>
     </div>
 
+    <!-- Main JavaScript File -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
