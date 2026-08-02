@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cold Store Khata</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:,">
     
     <!-- PDF Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -36,14 +37,14 @@
     <div id="appContainer" class="app-container" style="display: none;">
         <div class="header-bar" style="margin-top: 15px;">
             <h2>❄️ Cold Store Daily Khata</h2>
-            <button id="logoutBtn" onclick="logout()">Logout</button>
+            <button id="logoutBtn">Logout</button>
         </div>
         <p id="clock"></p>
 
         <!-- Undo Notification Bar -->
         <div id="undoToast" class="toast" style="display: none;">
             <span>Entry has been deleted.</span>
-            <button onclick="undoDelete()">↩️ Undo Delete</button>
+            <button id="undoBtn">↩️ Undo Delete</button>
         </div>
 
         <!-- Entry Form -->
@@ -58,7 +59,7 @@
                     <input type="number" id="paid" step="0.01" placeholder="Amount Paid" required>
                 </div>
                 <button type="submit" id="saveBtn">➕ Save & Sync Entry</button>
-                <button type="button" id="cancelEditBtn" onclick="resetForm()" style="display:none; background:#6c757d; margin-top:5px;">Cancel Edit</button>
+                <button type="button" id="cancelEditBtn" style="display:none; background:#6c757d; margin-top:5px;">Cancel Edit</button>
             </form>
         </div>
 
@@ -70,8 +71,8 @@
         </div>
 
         <div class="action-buttons">
-            <button id="pdfBtn" onclick="downloadPDF()">📄 Download PDF</button>
-            <button id="resetAllBtn" onclick="resetAllData()">⚠️ Reset All Khata</button>
+            <button id="pdfBtn">📄 Download PDF</button>
+            <button id="resetAllBtn">⚠️ Reset All Khata</button>
         </div>
 
         <!-- Table -->
@@ -96,7 +97,7 @@
         </div>
     </div>
 
-    <!-- Main JavaScript File (As Module to support modern Firebase v9/v10) -->
+    <!-- Main JavaScript File -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
