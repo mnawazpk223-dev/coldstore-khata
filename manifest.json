@@ -1,0 +1,15 @@
+{
+  "name": "Cold Store Daily Khata",
+  "short_name": "ColdKhata",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fa",
+  "theme_color": "#0b57d0",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2910/2910791.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
