@@ -61,7 +61,7 @@ if (showLoginBtn && showSignupBtn) {
     });
 }
 
-// Firebase Auth State Observer (Check if user is logged in)
+// Firebase Auth State Observer
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
@@ -83,9 +83,11 @@ signupForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("signup-password").value;
 
     try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log("Sign up successful:", userCredential.user);
         alert("Account created successfully!");
     } catch (error) {
+        console.error("Sign up error:", error.code, error.message);
         alert("Sign Up Error: " + error.message);
     }
 });
@@ -97,8 +99,10 @@ loginForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("login-password").value;
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Login successful:", userCredential.user);
     } catch (error) {
+        console.error("Login error:", error.code, error.message);
         alert("Login Error: " + error.message);
     }
 });
