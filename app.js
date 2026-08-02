@@ -140,9 +140,9 @@ function loadData() {
                         <td><small>${row.time}</small></td>
                         <td><b>${row.item}</b></td>
                         <td>${row.desc}</td>
-                        <td>$${row.price.toFixed(2)}</td>
-                        <td style="color:green; font-weight:bold;">$${row.paid.toFixed(2)}</td>
-                        <td style="color:red; font-weight:bold;">$${row.balance.toFixed(2)}</td>
+                        <td>BD ${row.price.toFixed(3)}</td>
+                        <td style="color:green; font-weight:bold;">BD ${row.paid.toFixed(3)}</td>
+                        <td style="color:red; font-weight:bold;">BD ${row.balance.toFixed(3)}</td>
                         <td>
                             <button class="edit-btn" data-id="${id}">✏️</button>
                             <button class="del-btn" data-id="${id}">X</button>
@@ -152,9 +152,9 @@ function loadData() {
             }
         }
 
-        document.getElementById('totalPrice').innerText = `$${tPrice.toFixed(2)}`;
-        document.getElementById('totalPaid').innerText = `$${tPaid.toFixed(2)}`;
-        document.getElementById('totalBalance').innerText = `$${tBal.toFixed(2)}`;
+        document.getElementById('totalPrice').innerText = `BD ${tPrice.toFixed(3)}`;
+        document.getElementById('totalPaid').innerText = `BD ${tPaid.toFixed(3)}`;
+        document.getElementById('totalBalance').innerText = `BD ${tBal.toFixed(3)}`;
 
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -220,22 +220,22 @@ document.getElementById('pdfBtn').addEventListener('click', () => {
     const doc = new jsPDF();
     
     doc.setFontSize(18);
-    doc.text("Cold Store Daily Khata Balance Sheet", 14, 18);
+    doc.text("Cold Store Daily Khata Balance Sheet (Bahrain)", 14, 18);
     doc.setFontSize(10);
     doc.text(`Generated Date/Time: ${new Date().toLocaleString()}`, 14, 25);
     
     const rows = allData.map(d => [
         d.time, d.item, d.desc, 
-        `$${d.price.toFixed(2)}`, 
-        `$${d.paid.toFixed(2)}`, 
-        `$${d.balance.toFixed(2)}`
+        `BD ${d.price.toFixed(3)}`, 
+        `BD ${d.paid.toFixed(3)}`, 
+        `BD ${d.balance.toFixed(3)}`
     ]);
 
     let totalP = allData.reduce((acc, obj) => acc + obj.price, 0);
     let totalPaid = allData.reduce((acc, obj) => acc + obj.paid, 0);
     let totalBal = allData.reduce((acc, obj) => acc + obj.balance, 0);
 
-    rows.push(['TOTALS', '', '', `$${totalP.toFixed(2)}`, `$${totalPaid.toFixed(2)}`, `$${totalBal.toFixed(2)}`]);
+    rows.push(['TOTALS', '', '', `BD ${totalP.toFixed(3)}`, `BD ${totalPaid.toFixed(3)}`, `BD ${totalBal.toFixed(3)}`]);
     
     doc.autoTable({
         head: [['Time & Date', 'Item Name', 'Description', 'Price', 'Paid', 'Balance']],
@@ -245,5 +245,5 @@ document.getElementById('pdfBtn').addEventListener('click', () => {
         headStyles: { fillColor: [30, 60, 114] }
     });
     
-    doc.save(`Khata_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+    doc.save(`Khata_Report_BHD_${new Date().toISOString().slice(0,10)}.pdf`);
 });
