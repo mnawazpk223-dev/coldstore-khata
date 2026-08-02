@@ -67,7 +67,7 @@ onAuthStateChanged(auth, (user) => {
         currentUser = user;
         authSection.style.display = "none";
         appDashboard.style.display = "block";
-        userEmailDisplay.innerText = `Logged in as: ${user.email}`;
+        userEmailDisplay.innerText = `Logged in: ${user.email}`;
         loadKhataData(user.uid);
     } else {
         currentUser = null;
@@ -112,7 +112,7 @@ document.getElementById("logout-btn").addEventListener("click", async () => {
     }
 });
 
-// Add Khata Entry Handler with OneSignal Notification Trigger
+// Add Khata Entry Handler with OneSignal & Browser Notification
 const entryForm = document.getElementById("entry-form");
 entryForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -132,35 +132,20 @@ entryForm.addEventListener("submit", async (e) => {
     };
 
     try {
-        // Save to Firestore
         await addDoc(collection(db, `users/${currentUser.uid}/khata`), entryData);
         
-        // Trigger OneSignal Web Notification for New Entry
-        if (window.OneSignalDeferred) {
-            window.OneSignalDeferred.push(async function(OneSignal) {
-                try {
-                    // Check if notifications are permitted/subscribed
-                    if (OneSignal.User.PushSubscription.optedIn) {
-                        // Optional: You can send via OneSignal REST API or show local native notification
-                        console.log("OneSignal ready for new entry alert");
-                    }
-                } catch (err) {
-                    console.error("OneSignal notification error:", err);
-                }
-            });
-        }
-
-        // Fallback or Direct Browser Notification API for immediate feedback
+        // Trigger Notification for New Entry
         if (Notification.permission === "granted") {
             new Notification("New Khata Entry Added", {
                 body: `${customerName} - ${itemDesc} (${amount.toFixed(3)} BHD)`,
-                icon: "data:,"
+                icon: "https://cdn-icons-png.flaticon.com/512/2910/2910791.png"
             });
         } else if (Notification.permission !== "denied") {
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
                     new Notification("New Khata Entry Added", {
-                        body: `${customerName} - ${itemDesc} (${amount.toFixed(3)} BHD)`
+                        body: `${customerName} - ${itemDesc} (${amount.toFixed(3)} BHD)`,
+                        icon: "https://cdn-icons-png.flaticon.com/512/2910/2910791.png"
                     });
                 }
             });
@@ -206,3 +191,32 @@ window.deleteEntry = async (id) => {
         }
     }
 };
+
+// --- PWA Install Prompt Logic ---
+let deferredPrompt;
+const installBtn = document.getElementById("install-btn");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) {
+        installBtn.style.display = "inline-block";
+    }
+});
+
+installBtn?.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+        console.log("User accepted the install prompt");
+    }
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+});
+
+window.addEventListener("appinstalled", () => {
+    if (installBtn) {
+        installBtn.style.display = "none";
+    }
+});
