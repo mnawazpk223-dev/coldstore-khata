@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Store Khata</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- jsPDF Libraries for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <h2>❄️ Cold Store Daily Khata</h2>
+        <p id="clock"></p>
+
+        <!-- Entry Form -->
+        <div class="card">
+            <h3>Nayi Entry Karein</h3>
+            <form id="khataForm">
+                <input type="text" id="itemName" placeholder="Item Name (e.g. Ice Cream Box)" required>
+                <input type="text" id="desc" placeholder="Description / Customer Name" required>
+                <div class="row">
+                    <input type="number" id="price" step="0.01" placeholder="Total Price" required>
+                    <input type="number" id="paid" step="0.01" placeholder="Amount Paid" required>
+                </div>
+                <button type="submit">➕ Save & Sync Entry</button>
+            </form>
+        </div>
+
+        <!-- Total Balance Sheet -->
+        <div class="card summary">
+            <div>Total: <b id="totalPrice">$0.00</b></div>
+            <div>Paid: <b id="totalPaid" style="color:green;">$0.00</b></div>
+            <div>Balance: <b id="totalBalance" style="color:red;">$0.00</b></div>
+        </div>
+
+        <button id="pdfBtn" onclick="downloadPDF()">📄 Download PDF Balance Sheet</button>
+
+        <!-- Table -->
+        <div class="card">
+            <h3>Today Khata Log</h3>
+            <div style="overflow-x: auto;">
+                <table border="1" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Item</th>
+                            <th>Details</th>
+                            <th>Price</th>
+                            <th>Paid</th>
+                            <th>Balance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
