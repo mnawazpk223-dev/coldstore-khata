@@ -22,10 +22,15 @@
 <body>
 
     <!-- RUNNING BANNER (TOP) -->
-    <div style="background: #1e3c72; color: #ffffff; padding: 8px 0; font-weight: bold; font-size: 14px; border-bottom: 2px solid #ffc107;">
+    <div style="background: #1e3c72; color: #ffffff; padding: 8px 0; font-weight: bold; font-size: 14px; border-bottom: 2px solid #ffc107; text-align: center;">
         <marquee behavior="scroll" direction="left" scrollamount="6">
             ✨ Made by ARSALAN KHAN ✨
         </marquee>
+    </div>
+
+    <!-- PWA Install / Download App Button (Always Visible on Top) -->
+    <div id="installContainer" style="max-width: 450px; margin: 15px auto; padding: 0 15px;">
+        <button id="installAppBtn" style="background: #2ec4b6; color: #fff; width: 100%; font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📲 Download & Install App</button>
     </div>
 
     <!-- AUTH SECTION (Login / Sign Up) -->
@@ -48,11 +53,6 @@
             <button id="logoutBtn">Logout</button>
         </div>
         <p id="clock"></p>
-
-        <!-- PWA Install / Download App Button (Visible to all users for manual/automatic install) -->
-        <div id="installContainer" style="margin-bottom: 15px;">
-            <button id="installAppBtn" style="background: #2ec4b6; color: #fff; width: 100%; font-weight: bold; padding: 12px; border: none; border-radius: 6px; cursor: pointer;">📲 Download & Install App</button>
-        </div>
 
         <!-- Undo Notification Bar -->
         <div id="undoToast" class="toast" style="display: none;">
