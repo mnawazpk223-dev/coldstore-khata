@@ -17,6 +17,11 @@ import {
     remove, 
     onValue 
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+import { 
+    getMessaging, 
+    getToken, 
+    onMessage 
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDizPXfz3urzxBJOJ2rEC9LBtLhNK3J6-w",
@@ -31,13 +36,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const database = getDatabase(app);
+const messaging = getMessaging(app);
+const dbRef = ref(database, 'khata_entries');
 
 setPersistence(auth, browserLocalPersistence).catch((error) => {
     console.error("Auth persistence error:", error);
 });
-
-const database = getDatabase(app);
-const dbRef = ref(database, 'khata_entries');
 
 let isSignUp = false;
 let lastDeletedEntry = null;
@@ -46,14 +51,44 @@ let notifTimeout = null;
 let allData = [];
 let isInitialLoad = true;
 
-// --- SERVICE WORKER ---
+// --- SERVICE WORKER & PUSH NOTIFICATIONS SETUP ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => console.log(err));
+        navigator.serviceWorker.register('/sw.js')
+            .then((reg) => {
+                console.log('Service Worker registered:', reg.scope);
+            })
+            .catch((err) => {
+                console.error('Service Worker registration failed:', err);
+            });
     });
 }
 
-// --- PWA INSTALL ---
+async function requestPushPermission() {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const token = await getToken(messaging, { 
+                vapidKey: 'BPuIyPSRmmsqVsB-11kB7BfDi-yl_RAIpzUzRSvwS1FVjN0HKGI8TdNqM4aznokhc8Uyoss7YmIT7EIwirVb5YQ' 
+            });
+            console.log("FCM Device Token Registered:", token);
+        } else {
+            console.log('Push notification permission denied by user.');
+        }
+    } catch (err) {
+        console.error('Error in retrieving FCM token:', err);
+    }
+}
+
+// Foreground message listener when app is open
+onMessage(messaging, (payload) => {
+    console.log('Message received in foreground: ', payload);
+    if(payload.notification) {
+        showInAppNotification(`✨ ${payload.notification.title}: ${payload.notification.body}`);
+    }
+});
+
+// --- PWA INSTALL PROMPT ---
 let deferredPrompt;
 const installContainer = document.getElementById('installContainer');
 const installAppBtn = document.getElementById('installAppBtn');
@@ -129,6 +164,7 @@ onAuthStateChanged(auth, (user) => {
         if(authContainer) authContainer.style.display = 'none';
         if(appContainer) appContainer.style.display = 'block';
         loadData();
+        requestPushPermission();
     } else {
         if(authContainer) authContainer.style.display = 'block';
         if(appContainer) appContainer.style.display = 'none';
@@ -192,7 +228,7 @@ if(cancelEditBtn) {
     cancelEditBtn.addEventListener('click', resetForm);
 }
 
-// --- LOAD DATA ---
+// --- LOAD DATA & LIVE SYNC ---
 function loadData() {
     onValue(dbRef, (snapshot) => {
         const tableBody = document.getElementById('tableBody');
@@ -347,7 +383,7 @@ if(pdfBtn) {
 
         let totalP = allData.reduce((acc, obj) => acc + obj.price, 0);
         let totalPaid = allData.reduce((acc, obj) => acc + obj.paid, 0);
-        let totalBal = allData.reduce((obj1, obj2) => obj1 + obj2.balance, 0);
+        let totalBal = allData.reduce((acc, obj) => acc + obj.balance, 0);
 
         rows.push(['TOTALS', '', '', `BD ${totalP.toFixed(3)}`, `BD ${totalPaid.toFixed(3)}`, `BD ${totalBal.toFixed(3)}`]);
         
