@@ -1,4 +1,3 @@
-// Import Firebase functions from CDN modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { 
     getAuth, 
@@ -17,7 +16,6 @@ import {
     onValue 
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
-// Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyDizPXfz3urzxBJOJ2rEC9LBtLhNK3J6-w",
     authDomain: "coldstorekhata.firebaseapp.com",
@@ -29,7 +27,6 @@ const firebaseConfig = {
     measurementId: "G-X3G1EEZ4N8"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
@@ -40,7 +37,7 @@ let lastDeletedEntry = null;
 let undoTimeout = null;
 let allData = [];
 
-// --- LOGIN / SIGN UP TOGGLE ---
+// --- TOGGLE AUTH ---
 const switchAuth = document.getElementById('switchAuth');
 if(switchAuth) {
     switchAuth.addEventListener('click', (e) => {
@@ -53,24 +50,21 @@ if(switchAuth) {
     });
 }
 
-// --- AUTH SUBMIT HANDLER ---
-const authForm = document.getElementById('authForm');
-if(authForm) {
-    authForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('authEmail').value;
-        const pass = document.getElementById('authPassword').value;
+// --- AUTH SUBMIT ---
+document.getElementById('authForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value;
+    const pass = document.getElementById('authPassword').value;
 
-        if (isSignUp) {
-            createUserWithEmailAndPassword(auth, email, pass)
-                .then(() => alert("Account created successfully! You are now logged in."))
-                .catch(err => alert(err.message));
-        } else {
-            signInWithEmailAndPassword(auth, email, pass)
-                .catch(err => alert(err.message));
-        }
-    });
-}
+    if (isSignUp) {
+        createUserWithEmailAndPassword(auth, email, pass)
+            .then(() => alert("Account created successfully!"))
+            .catch(err => alert(err.message));
+    } else {
+        signInWithEmailAndPassword(auth, email, pass)
+            .catch(err => alert(err.message));
+    }
+});
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -83,9 +77,9 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-window.logout = function() {
+document.getElementById('logoutBtn').addEventListener('click', () => {
     signOut(auth);
-}
+});
 
 // --- CLOCK ---
 setInterval(() => {
@@ -94,31 +88,25 @@ setInterval(() => {
 }, 1000);
 
 // --- ADD / EDIT ENTRY ---
-const khataForm = document.getElementById('khataForm');
-if(khataForm) {
-    khataForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+document.getElementById('khataForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('editId').value;
+    const item = document.getElementById('itemName').value;
+    const desc = document.getElementById('desc').value;
+    const price = parseFloat(document.getElementById('price').value);
+    const paid = parseFloat(document.getElementById('paid').value);
+    const balance = price - paid;
+    const time = new Date().toLocaleString();
 
-        const editId = document.getElementById('editId').value;
-        const item = document.getElementById('itemName').value;
-        const desc = document.getElementById('desc').value;
-        const price = parseFloat(document.getElementById('price').value);
-        const paid = parseFloat(document.getElementById('paid').value);
-        const balance = price - paid;
-        const time = new Date().toLocaleString();
+    if (editId) {
+        update(ref(database, 'khata_entries/' + editId), { item, desc, price, paid, balance });
+    } else {
+        push(dbRef, { item, desc, price, paid, balance, time });
+    }
+    resetForm();
+});
 
-        if (editId) {
-            const itemRef = ref(database, 'khata_entries/' + editId);
-            update(itemRef, { item, desc, price, paid, balance });
-        } else {
-            push(dbRef, { item, desc, price, paid, balance, time });
-        }
-
-        resetForm();
-    });
-}
-
-window.resetForm = function() {
+function resetForm() {
     document.getElementById('khataForm').reset();
     document.getElementById('editId').value = '';
     document.getElementById('formTitle').innerText = 'Add New Entry';
@@ -126,73 +114,17 @@ window.resetForm = function() {
     document.getElementById('cancelEditBtn').style.display = 'none';
 }
 
-// --- EDIT ENTRY FUNCTION ---
-window.editEntry = function(id) {
-    const itemData = allData.find(d => d.id === id);
-    if (itemData) {
-        document.getElementById('editId').value = id;
-        document.getElementById('itemName').value = itemData.item;
-        document.getElementById('desc').value = itemData.desc;
-        document.getElementById('price').value = itemData.price;
-        document.getElementById('paid').value = itemData.paid;
+document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
 
-        document.getElementById('formTitle').innerText = '✏️ Edit Entry';
-        document.getElementById('saveBtn').innerText = '🔄 Update Entry';
-        document.getElementById('cancelEditBtn').style.display = 'block';
-    }
-}
-
-// --- DELETE & UNDO SYSTEM ---
-window.deleteEntry = function(id) {
-    const itemData = allData.find(d => d.id === id);
-    if (itemData && confirm("Are you sure you want to delete this entry?")) {
-        lastDeletedEntry = itemData;
-        const itemRef = ref(database, 'khata_entries/' + id);
-        remove(itemRef);
-
-        const toast = document.getElementById('undoToast');
-        toast.style.display = 'flex';
-        
-        clearTimeout(undoTimeout);
-        undoTimeout = setTimeout(() => {
-            toast.style.display = 'none';
-            lastDeletedEntry = null;
-        }, 7000);
-    }
-}
-
-window.undoDelete = function() {
-    if (lastDeletedEntry) {
-        const id = lastDeletedEntry.id;
-        delete lastDeletedEntry.id;
-        const itemRef = ref(database, 'khata_entries/' + id);
-        set(itemRef, lastDeletedEntry);
-        lastDeletedEntry = null;
-        document.getElementById('undoToast').style.display = 'none';
-    }
-}
-
-// --- RESET ALL DATA SYSTEM ---
-window.resetAllData = function() {
-    if (confirm("⚠️ WARNING: Do you want to clear the entire Khata? This cannot be undone!")) {
-        if (confirm("FINAL CONFIRMATION: Delete all entries permanently?")) {
-            remove(dbRef);
-        }
-    }
-}
-
-// --- REALTIME DATABASE SYNC ---
+// --- LOAD DATA & TABLE ---
 function loadData() {
     onValue(dbRef, (snapshot) => {
         const tableBody = document.getElementById('tableBody');
-        if(!tableBody) return;
         tableBody.innerHTML = '';
-        
         let tPrice = 0, tPaid = 0, tBal = 0;
         allData = [];
 
         const data = snapshot.val();
-        
         if (data) {
             for (let id in data) {
                 const row = data[id];
@@ -212,8 +144,8 @@ function loadData() {
                         <td style="color:green; font-weight:bold;">$${row.paid.toFixed(2)}</td>
                         <td style="color:red; font-weight:bold;">$${row.balance.toFixed(2)}</td>
                         <td>
-                            <button class="edit-btn" onclick="editEntry('${id}')">✏️</button>
-                            <button class="del-btn" onclick="deleteEntry('${id}')">X</button>
+                            <button class="edit-btn" data-id="${id}">✏️</button>
+                            <button class="del-btn" data-id="${id}">X</button>
                         </td>
                     </tr>
                 `;
@@ -223,11 +155,68 @@ function loadData() {
         document.getElementById('totalPrice').innerText = `$${tPrice.toFixed(2)}`;
         document.getElementById('totalPaid').innerText = `$${tPaid.toFixed(2)}`;
         document.getElementById('totalBalance').innerText = `$${tBal.toFixed(2)}`;
+
+        // Attach event listeners to dynamic edit/delete buttons
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const itemData = allData.find(d => d.id === id);
+                if (itemData) {
+                    document.getElementById('editId').value = id;
+                    document.getElementById('itemName').value = itemData.item;
+                    document.getElementById('desc').value = itemData.desc;
+                    document.getElementById('price').value = itemData.price;
+                    document.getElementById('paid').value = itemData.paid;
+                    document.getElementById('formTitle').innerText = '✏️ Edit Entry';
+                    document.getElementById('saveBtn').innerText = '🔄 Update Entry';
+                    document.getElementById('cancelEditBtn').style.display = 'block';
+                }
+            });
+        });
+
+        document.querySelectorAll('.del-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const itemData = allData.find(d => d.id === id);
+                if (itemData && confirm("Are you sure you want to delete this entry?")) {
+                    lastDeletedEntry = itemData;
+                    remove(ref(database, 'khata_entries/' + id));
+                    
+                    const toast = document.getElementById('undoToast');
+                    toast.style.display = 'flex';
+                    clearTimeout(undoTimeout);
+                    undoTimeout = setTimeout(() => {
+                        toast.style.display = 'none';
+                        lastDeletedEntry = null;
+                    }, 7000);
+                }
+            });
+        });
     });
 }
 
+// --- UNDO DELETE ---
+document.getElementById('undoBtn').addEventListener('click', () => {
+    if (lastDeletedEntry) {
+        const id = lastDeletedEntry.id;
+        delete lastDeletedEntry.id;
+        set(ref(database, 'khata_entries/' + id), lastDeletedEntry);
+        lastDeletedEntry = null;
+        document.getElementById('undoToast').style.display = 'none';
+    }
+});
+
+// --- RESET ALL ---
+document.getElementById('resetAllBtn').addEventListener('click', () => {
+    if (confirm("⚠️ WARNING: Clear entire Khata?")) {
+        if (confirm("FINAL CONFIRMATION: Delete permanently?")) {
+            remove(dbRef);
+        }
+    }
+});
+
 // --- PDF DOWNLOAD ---
-window.downloadPDF = function() {
+document.getElementById('pdfBtn').addEventListener('click', () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
@@ -237,9 +226,7 @@ window.downloadPDF = function() {
     doc.text(`Generated Date/Time: ${new Date().toLocaleString()}`, 14, 25);
     
     const rows = allData.map(d => [
-        d.time, 
-        d.item, 
-        d.desc, 
+        d.time, d.item, d.desc, 
         `$${d.price.toFixed(2)}`, 
         `$${d.paid.toFixed(2)}`, 
         `$${d.balance.toFixed(2)}`
@@ -247,7 +234,7 @@ window.downloadPDF = function() {
 
     let totalP = allData.reduce((acc, obj) => acc + obj.price, 0);
     let totalPaid = allData.reduce((acc, obj) => acc + obj.paid, 0);
-    let totalBal = allData.reduce((acc, obj) => obj.balance ? acc + obj.balance : acc + (obj.price - obj.paid), 0);
+    let totalBal = allData.reduce((acc, obj) => acc + obj.balance, 0);
 
     rows.push(['TOTALS', '', '', `$${totalP.toFixed(2)}`, `$${totalPaid.toFixed(2)}`, `$${totalBal.toFixed(2)}`]);
     
@@ -260,4 +247,4 @@ window.downloadPDF = function() {
     });
     
     doc.save(`Khata_Report_${new Date().toISOString().slice(0,10)}.pdf`);
-}
+});
