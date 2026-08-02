@@ -176,12 +176,13 @@ function loadKhataData(uid) {
         snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             allTransactions.push({ id: docSnap.id, ...data });
-            grandTotal += Number(data.amount || 0);
+            grandTotal += parseFloat(data.amount || 0);
         });
 
         // Update Total Amount Card Display
-        if (totalAmountDisplay) {
-            totalAmountDisplay.innerText = `${grandTotal.toFixed(3)} BHD`;
+        const totalDisplay = document.getElementById("total-amount-display");
+        if (totalDisplay) {
+            totalDisplay.innerText = `${grandTotal.toFixed(3)} BHD`;
         }
 
         renderTable(allTransactions);
@@ -197,7 +198,7 @@ function renderTable(dataArray) {
                 <td>${data.date}</td>
                 <td>${data.customerName}</td>
                 <td>${data.itemDesc}</td>
-                <td>${data.amount.toFixed(3)} BHD</td>
+                <td>${parseFloat(data.amount).toFixed(3)} BHD</td>
                 <td>
                     <div class="action-btns">
                         <button onclick="window.editEntry('${data.id}', '${data.customerName}', '${data.itemDesc}', ${data.amount})" class="edit-btn">Edit</button>
@@ -276,8 +277,8 @@ document.getElementById("download-pdf-btn")?.addEventListener("click", () => {
         docPdf.text(item.date.substring(0, 10), 14, y);
         docPdf.text(item.customerName.substring(0, 18), 55, y);
         docPdf.text(item.itemDesc.substring(0, 22), 105, y);
-        docPdf.text(item.amount.toFixed(3), 160, y);
-        totalAmount += item.amount;
+        docPdf.text(parseFloat(item.amount).toFixed(3), 160, y);
+        totalAmount += parseFloat(item.amount || 0);
         y += 8;
     });
 
