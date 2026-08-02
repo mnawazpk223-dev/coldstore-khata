@@ -19,16 +19,18 @@ let lastDeletedEntry = null;
 let undoTimeout = null;
 let allData = [];
 
-// --- LOGIN / SIGN UP LOGIC ---
+// --- LOGIN / SIGN UP TOGGLE ---
 const switchAuth = document.getElementById('switchAuth');
 switchAuth.addEventListener('click', (e) => {
     e.preventDefault();
     isSignUp = !isSignUp;
     document.getElementById('authTitle').innerText = isSignUp ? "Sign Up for Khata" : "Login to Khata";
     document.getElementById('authBtn').innerText = isSignUp ? "Create Account" : "Sign In";
-    switchAuth.innerText = isSignUp ? "Login karein" : "Sign Up karein";
+    switchAuth.innerText = isSignUp ? "Login" : "Sign Up";
+    document.getElementById('toggleAuth').firstChild.textContent = isSignUp ? "Already have an account? " : "Don't have an account? ";
 });
 
+// --- AUTH SUBMIT HANDLER ---
 document.getElementById('authForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('authEmail').value;
@@ -36,7 +38,7 @@ document.getElementById('authForm').addEventListener('submit', (e) => {
 
     if (isSignUp) {
         auth.createUserWithEmailAndPassword(email, pass)
-            .then(() => alert("Account ban gaya hai! Aap Logged In hain."))
+            .then(() => alert("Account created successfully! You are now logged in."))
             .catch(err => alert(err.message));
     } else {
         auth.signInWithEmailAndPassword(email, pass)
@@ -89,7 +91,7 @@ document.getElementById('khataForm').addEventListener('submit', (e) => {
 function resetForm() {
     document.getElementById('khataForm').reset();
     document.getElementById('editId').value = '';
-    document.getElementById('formTitle').innerText = 'Nayi Entry Karein';
+    document.getElementById('formTitle').innerText = 'Add New Entry';
     document.getElementById('saveBtn').innerText = '➕ Save & Sync Entry';
     document.getElementById('cancelEditBtn').style.display = 'none';
 }
@@ -113,7 +115,7 @@ function editEntry(id) {
 // --- DELETE & UNDO SYSTEM ---
 function deleteEntry(id) {
     const itemData = allData.find(d => d.id === id);
-    if (itemData && confirm("Kya aap is entry ko delete karna chahte hain?")) {
+    if (itemData && confirm("Are you sure you want to delete this entry?")) {
         lastDeletedEntry = itemData;
         db.child(id).remove();
 
@@ -140,8 +142,8 @@ function undoDelete() {
 
 // --- RESET ALL DATA SYSTEM ---
 function resetAllData() {
-    if (confirm("⚠️ WARNING: Kya aap poora Khata clear karna chahte hain? Ye wapas nahi aayega!")) {
-        if (confirm("FINAL CONFIRMATION: Sab entries delete kar dein?")) {
+    if (confirm("⚠️ WARNING: Do you want to clear the entire Khata? This cannot be undone!")) {
+        if (confirm("FINAL CONFIRMATION: Delete all entries permanently?")) {
             db.remove();
         }
     }
