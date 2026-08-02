@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cold Store Daily Khata</title>
     
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#0b57d0">
     <link rel="icon" href="data:,">
     
     <!-- CSS Stylesheet -->
@@ -24,9 +24,14 @@
 </head>
 <body>
 
+    <!-- Developer Banner (Samsung One UI Style) -->
+    <div class="dev-banner">
+        <span>Developed with <span class="heart">❤️</span> by <strong>ARSALAN KHAN</strong></span>
+    </div>
+
     <div class="container">
-        <header>
-            <h1>Cold Store Daily Khata</h1>
+        <header class="app-header">
+            <h1>Cold Store Khata</h1>
             <p>Bahrain Market Daily Bookkeeping</p>
         </header>
 
@@ -40,30 +45,30 @@
 
                 <!-- Login Form -->
                 <form id="login-form" class="auth-form">
-                    <h2>Login to Your Account</h2>
+                    <h2>Welcome Back</h2>
                     <div class="input-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" placeholder="Enter your email" required>
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="name@example.com" required>
                     </div>
                     <div class="input-group">
                         <label for="login-password">Password</label>
-                        <input type="password" id="login-password" placeholder="Enter password" required>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit" id="login-btn">Login</button>
+                    <button type="submit" id="login-btn" class="samsung-btn">Login</button>
                 </form>
 
                 <!-- Sign Up Form -->
                 <form id="signup-form" class="auth-form" style="display: none;">
-                    <h2>Create New Account</h2>
+                    <h2>Create Account</h2>
                     <div class="input-group">
-                        <label for="signup-email">Email</label>
-                        <input type="email" id="signup-email" placeholder="Enter your email" required>
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" placeholder="name@example.com" required>
                     </div>
                     <div class="input-group">
                         <label for="signup-password">Password</label>
-                        <input type="password" id="signup-password" placeholder="Create password" required>
+                        <input type="password" id="signup-password" placeholder="Create a secure password" required>
                     </div>
-                    <button type="submit" id="signup-btn">Sign Up</button>
+                    <button type="submit" id="signup-btn" class="samsung-btn">Sign Up</button>
                 </form>
             </section>
 
@@ -71,11 +76,11 @@
             <section id="app-dashboard" style="display: none;">
                 <div class="user-info-bar">
                     <span id="user-email-display"></span>
-                    <button id="logout-btn">Logout</button>
+                    <button id="logout-btn" class="logout-btn">Logout</button>
                 </div>
 
                 <!-- Entry Form Section -->
-                <div id="entry-form-section">
+                <div id="entry-form-section" class="samsung-card">
                     <h2>Add New Entry</h2>
                     <form id="entry-form">
                         <div class="input-group">
@@ -90,12 +95,12 @@
                             <label for="amount">Amount (BHD)</label>
                             <input type="number" id="amount" placeholder="0.000" step="0.001" required>
                         </div>
-                        <button type="submit" id="add-btn">Add Entry</button>
+                        <button type="submit" id="add-btn" class="samsung-btn">Add Entry</button>
                     </form>
                 </div>
 
                 <!-- Records & Transactions Section -->
-                <div id="records-section">
+                <div id="records-section" class="samsung-card" style="margin-top: 20px;">
                     <h2>Transactions & Balances</h2>
                     <div class="filter-container">
                         <input type="text" id="search-box" placeholder="Search by name...">
