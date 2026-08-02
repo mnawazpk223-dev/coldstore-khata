@@ -6,11 +6,6 @@
     <title>Cold Store Khata</title>
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Stable Firebase v8 CDN Links (No Version Conflicts) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <!-- PDF Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -101,6 +96,7 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Main JavaScript File (As Module to support modern Firebase v9/v10) -->
+    <script type="module" src="app.js"></script>
 </body>
 </html>
