@@ -7,12 +7,12 @@
     --text-secondary: #5f6368;
     --border-color: #e3e6ed;
     --danger: #d93025;
+    --success: #10b981;
     --radius-xl: 32px;
     --radius-lg: 24px;
     --radius-md: 16px;
     --radius-sm: 12px;
     --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.04);
-    --shadow-hover: 0 16px 40px rgba(11, 87, 208, 0.08);
 }
 
 body {
@@ -24,7 +24,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Developer Banner (Samsung One UI Top Bar Style) */
 .dev-banner {
     background: linear-gradient(135deg, #0b57d0, #1d4ed8);
     color: white;
@@ -78,7 +77,6 @@ body {
     font-weight: 400;
 }
 
-/* Auth Tabs (One UI Segmented Control Style) */
 .auth-tabs {
     display: flex;
     background: #edf1f7;
@@ -106,7 +104,6 @@ body {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-/* Forms & Inputs */
 .input-group {
     margin-bottom: 18px;
 }
@@ -139,7 +136,6 @@ body {
     box-shadow: 0 0 0 4px rgba(11, 87, 208, 0.12);
 }
 
-/* Buttons */
 .samsung-btn {
     width: 100%;
     background: var(--primary);
@@ -161,10 +157,8 @@ body {
 
 .samsung-btn:hover {
     background: var(--primary-hover);
-    box-shadow: var(--shadow-hover);
 }
 
-/* Dashboard Cards */
 .samsung-card {
     background: #ffffff;
     border: 1.5px solid var(--border-color);
@@ -210,7 +204,32 @@ body {
     color: white;
 }
 
-/* Tables */
+.install-btn {
+    background: var(--success);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pdf-btn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pdf-btn:hover {
+    background: #6d28d9;
+}
+
 .table-container {
     overflow-x: auto;
     margin-top: 14px;
@@ -222,7 +241,7 @@ table {
 }
 
 th, td {
-    padding: 14px 12px;
+    padding: 14px 10px;
     text-align: left;
     font-size: 14px;
     border-bottom: 1px solid var(--border-color);
@@ -234,18 +253,34 @@ th {
     background: #f8f9fc;
 }
 
-th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
-th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+.action-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.edit-btn {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background: #0284c7;
+    color: white;
+}
 
 .delete-btn {
     background: #fde8e8;
     color: var(--danger);
     border: none;
-    padding: 7px 12px;
+    padding: 6px 10px;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
 }
 
 .delete-btn:hover {
