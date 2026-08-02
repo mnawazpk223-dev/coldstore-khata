@@ -1,23 +1,254 @@
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eef2f3; padding: 0 0 15px 0; margin: 0; }
-.app-container, .auth-box { max-width: 600px; margin: auto; padding: 0 15px; }
-.auth-box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 50px; }
-h2 { color: #1e3c72; text-align: center; margin-bottom: 5px; }
-#clock { text-align: center; color: #666; font-size: 13px; margin-bottom: 15px; }
-.card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-input { width: 100%; padding: 10px; margin: 5px 0 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-.row { display: flex; gap: 10px; }
-button { width: 100%; padding: 12px; background: #1e3c72; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px; }
-button:hover { background: #2a5298; }
-.header-bar { display: flex; justify-content: space-between; align-items: center; }
-#logoutBtn { width: auto; padding: 6px 12px; background: #dc3545; font-size: 12px; }
-.action-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
-#pdfBtn { background: #28a745; }
-#resetAllBtn { background: #dc3545; }
-.summary { display: flex; justify-content: space-around; font-size: 16px; background: #1e3c72; color: white; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
-th { background: #f8f9fa; }
-.toast { background: #333; color: white; padding: 12px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.toast button { width: auto; padding: 5px 10px; background: #ffc107; color: black; }
-.edit-btn { background: #ffc107; color: black; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; margin-right: 4px; }
-.del-btn { background: #dc3545; color: white; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; }
+:root {
+    --bg-color: #f4f6fa;
+    --card-bg: #ffffff;
+    --primary: #0b57d0;
+    --primary-hover: #0842a0;
+    --text-main: #191c20;
+    --text-secondary: #5f6368;
+    --border-color: #e3e6ed;
+    --danger: #d93025;
+    --radius-xl: 32px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 16px 40px rgba(11, 87, 208, 0.08);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Developer Banner (Samsung One UI Top Bar Style) */
+.dev-banner {
+    background: linear-gradient(135deg, #0b57d0, #1d4ed8);
+    color: white;
+    text-align: center;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(11, 87, 208, 0.15);
+}
+
+.dev-banner .heart {
+    color: #ff6b6b;
+    display: inline-block;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.container {
+    max-width: 650px;
+    margin: 24px auto;
+    padding: 28px;
+    background: var(--card-bg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.app-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
+
+.app-header p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Auth Tabs (One UI Segmented Control Style) */
+.auth-tabs {
+    display: flex;
+    background: #edf1f7;
+    border-radius: var(--radius-md);
+    padding: 5px;
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-secondary);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn.active {
+    background: var(--card-bg);
+    color: var(--primary);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Forms & Inputs */
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    margin-left: 4px;
+}
+
+.input-group input, .filter-container input {
+    width: 100%;
+    padding: 15px 18px;
+    background: #f8f9fc;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    color: var(--text-main);
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus, .filter-container input:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(11, 87, 208, 0.12);
+}
+
+/* Buttons */
+.samsung-btn {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 20px rgba(11, 87, 208, 0.25);
+    margin-top: 10px;
+}
+
+.samsung-btn:active {
+    transform: scale(0.98);
+}
+
+.samsung-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Dashboard Cards */
+.samsung-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.samsung-card h2 {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.user-info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #edf1f7;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.logout-btn {
+    background: #fde8e8;
+    color: var(--danger);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin-top: 14px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: #f8f9fc;
+}
+
+th:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+th:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+.delete-btn {
+    background: #fde8e8;
+    color: var(--danger);
+    border: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.delete-btn:hover {
+    background: var(--danger);
+    color: white;
+}
