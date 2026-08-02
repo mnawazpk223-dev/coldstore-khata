@@ -6,20 +6,22 @@ self.addEventListener('activate', (e) => {
     return self.clients.claim();
 });
 
-// Background push notification listener
-self.addEventListener('push', (e) => {
-    let data = { title: 'Cold Store Khata', body: 'New update in Khata ledger!' };
-    if (e.data) {
-        data = e.data.json();
-    }
+// Yeh listener background mein push notification receive karega
+self.addEventListener('push', (event) => {
+    let data = { title: 'Cold Store Khata', body: 'New entry added to ledger!' };
     
+    if (event.data) {
+        data = event.data.json();
+    }
+
     const options = {
         body: data.body,
         icon: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
-        badge: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png'
+        badge: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
+        vibrate: [200, 100, 200]
     };
 
-    e.waitUntil(
+    event.waitUntil(
         self.registration.showNotification(data.title, options)
     );
 });
