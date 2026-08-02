@@ -37,6 +37,36 @@ let lastDeletedEntry = null;
 let undoTimeout = null;
 let allData = [];
 
+// --- PWA INSTALL PROMPT (Android & iOS) ---
+let deferredPrompt;
+const installContainer = document.getElementById('installContainer');
+const installAppBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installContainer.style.display = 'block';
+});
+
+installAppBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            installContainer.style.display = 'none';
+        }
+        deferredPrompt = null;
+    } else {
+        // iOS or fallback instructions
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            alert("To install on iOS: Tap the Share button (box with arrow) at the bottom of Safari and select 'Add to Home Screen'.");
+        } else {
+            alert("App is already installed or your browser doesn't support direct installation. Use browser menu to 'Add to Home Screen'.");
+        }
+    }
+});
+
 // --- TOGGLE AUTH ---
 const switchAuth = document.getElementById('switchAuth');
 if(switchAuth) {
@@ -87,14 +117,20 @@ setInterval(() => {
     if (clock) clock.innerText = new Date().toLocaleString();
 }, 1000);
 
-// --- ADD / EDIT ENTRY ---
+// --- ADD / EDIT ENTRY (With Default 0 Check) ---
 document.getElementById('khataForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const editId = document.getElementById('editId').value;
     const item = document.getElementById('itemName').value;
     const desc = document.getElementById('desc').value;
-    const price = parseFloat(document.getElementById('price').value);
-    const paid = parseFloat(document.getElementById('paid').value);
+    
+    // Agar field khali ho toh default 0 set ho jaye ga
+    let priceInput = document.getElementById('price').value;
+    let paidInput = document.getElementById('paid').value;
+
+    const price = priceInput === "" ? 0 : parseFloat(priceInput);
+    const paid = paidInput === "" ? 0 : parseFloat(paidInput);
+    
     const balance = price - paid;
     const time = new Date().toLocaleString();
 
