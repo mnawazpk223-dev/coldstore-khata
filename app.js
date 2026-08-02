@@ -10,105 +10,192 @@ const firebaseConfig = {
     measurementId: "G-X3G1EEZ4N8"
 };
 
-// Initialize Firebase Database
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.database().ref('khata_entries');
 
-// Live Clock in Header
-setInterval(() => {
-    const clockElem = document.getElementById('clock');
-    if(clockElem) clockElem.innerText = new Date().toLocaleString();
-}, 1000);
+let isSignUp = false;
+let lastDeletedEntry = null;
+let undoTimeout = null;
+let allData = [];
 
-// Request Push Notification Permission
-if ("Notification" in window) {
-    Notification.requestPermission();
+// --- LOGIN / SIGN UP LOGIC ---
+const switchAuth = document.getElementById('switchAuth');
+switchAuth.addEventListener('click', (e) => {
+    e.preventDefault();
+    isSignUp = !isSignUp;
+    document.getElementById('authTitle').innerText = isSignUp ? "Sign Up for Khata" : "Login to Khata";
+    document.getElementById('authBtn').innerText = isSignUp ? "Create Account" : "Sign In";
+    switchAuth.innerText = isSignUp ? "Login karein" : "Sign Up karein";
+});
+
+document.getElementById('authForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value;
+    const pass = document.getElementById('authPassword').value;
+
+    if (isSignUp) {
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then(() => alert("Account ban gaya hai! Aap Logged In hain."))
+            .catch(err => alert(err.message));
+    } else {
+        auth.signInWithEmailAndPassword(email, pass)
+            .catch(err => alert(err.message));
+    }
+});
+
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        document.getElementById('authContainer').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        loadData();
+    } else {
+        document.getElementById('authContainer').style.display = 'block';
+        document.getElementById('appContainer').style.display = 'none';
+    }
+});
+
+function logout() {
+    auth.signOut();
 }
 
-// --- SAVE ENTRY TO FIREBASE ---
+// --- CLOCK ---
+setInterval(() => {
+    const clock = document.getElementById('clock');
+    if (clock) clock.innerText = new Date().toLocaleString();
+}, 1000);
+
+// --- ADD / EDIT ENTRY ---
 document.getElementById('khataForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
+    const editId = document.getElementById('editId').value;
     const item = document.getElementById('itemName').value;
     const desc = document.getElementById('desc').value;
     const price = parseFloat(document.getElementById('price').value);
     const paid = parseFloat(document.getElementById('paid').value);
     const balance = price - paid;
-    const time = new Date().toLocaleString(); // Automatically logged date & time
+    const time = new Date().toLocaleString();
 
-    // Push entry to cloud (Firebase)
-    db.push({ item, desc, price, paid, balance, time });
+    if (editId) {
+        db.child(editId).update({ item, desc, price, paid, balance });
+    } else {
+        db.push({ item, desc, price, paid, balance, time });
+    }
 
-    // Reset Form Input Fields
+    resetForm();
+});
+
+function resetForm() {
     document.getElementById('khataForm').reset();
-});
+    document.getElementById('editId').value = '';
+    document.getElementById('formTitle').innerText = 'Nayi Entry Karein';
+    document.getElementById('saveBtn').innerText = '➕ Save & Sync Entry';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+}
 
-// --- REALTIME SYNC (AUTOMATIC UPDATE ON ALL PHONES) ---
-let allData = [];
+// --- EDIT ENTRY FUNCTION ---
+function editEntry(id) {
+    const itemData = allData.find(d => d.id === id);
+    if (itemData) {
+        document.getElementById('editId').value = id;
+        document.getElementById('itemName').value = itemData.item;
+        document.getElementById('desc').value = itemData.desc;
+        document.getElementById('price').value = itemData.price;
+        document.getElementById('paid').value = itemData.paid;
 
-db.on('value', (snapshot) => {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';
-    
-    let tPrice = 0, tPaid = 0, tBal = 0;
-    allData = [];
-
-    const data = snapshot.val();
-    
-    if (data) {
-        for (let id in data) {
-            const row = data[id];
-            row.id = id;
-            allData.push(row);
-
-            tPrice += row.price;
-            tPaid += row.paid;
-            tBal += row.balance;
-
-            tableBody.innerHTML += `
-                <tr>
-                    <td><small>${row.time}</small></td>
-                    <td><b>${row.item}</b></td>
-                    <td>${row.desc}</td>
-                    <td>$${row.price.toFixed(2)}</td>
-                    <td style="color:green; font-weight:bold;">$${row.paid.toFixed(2)}</td>
-                    <td style="color:red; font-weight:bold;">$${row.balance.toFixed(2)}</td>
-                    <td><button onclick="deleteEntry('${id}')" style="background:red; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;">X</button></td>
-                </tr>
-            `;
-        }
-    }
-
-    // Update Totals Summary
-    document.getElementById('totalPrice').innerText = `$${tPrice.toFixed(2)}`;
-    document.getElementById('totalPaid').innerText = `$${tPaid.toFixed(2)}`;
-    document.getElementById('totalBalance').innerText = `$${tBal.toFixed(2)}`;
-});
-
-// Send Mobile Notification on New Entry
-db.limitToLast(1).on('child_added', (snapshot) => {
-    const val = snapshot.val();
-    if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("❄️ Cold Store Khata Updated", {
-            body: `New Entry: ${val.item} - Price: $${val.price}`,
-            icon: "https://cdn-icons-png.flaticon.com/512/3144/3144456.png"
-        });
-    }
-});
-
-// Delete Entry Function
-function deleteEntry(id) {
-    if (confirm("Kya aap is entry ko delete karna chahte hain?")) {
-        firebase.database().ref('khata_entries/' + id).remove();
+        document.getElementById('formTitle').innerText = '✏️ Edit Entry';
+        document.getElementById('saveBtn').innerText = '🔄 Update Entry';
+        document.getElementById('cancelEditBtn').style.display = 'block';
     }
 }
 
-// --- GENERATE & DOWNLOAD PDF BALANCE SHEET ---
+// --- DELETE & UNDO SYSTEM ---
+function deleteEntry(id) {
+    const itemData = allData.find(d => d.id === id);
+    if (itemData && confirm("Kya aap is entry ko delete karna chahte hain?")) {
+        lastDeletedEntry = itemData;
+        db.child(id).remove();
+
+        const toast = document.getElementById('undoToast');
+        toast.style.display = 'flex';
+        
+        clearTimeout(undoTimeout);
+        undoTimeout = setTimeout(() => {
+            toast.style.display = 'none';
+            lastDeletedEntry = null;
+        }, 7000);
+    }
+}
+
+function undoDelete() {
+    if (lastDeletedEntry) {
+        const id = lastDeletedEntry.id;
+        delete lastDeletedEntry.id;
+        db.child(id).set(lastDeletedEntry);
+        lastDeletedEntry = null;
+        document.getElementById('undoToast').style.display = 'none';
+    }
+}
+
+// --- RESET ALL DATA SYSTEM ---
+function resetAllData() {
+    if (confirm("⚠️ WARNING: Kya aap poora Khata clear karna chahte hain? Ye wapas nahi aayega!")) {
+        if (confirm("FINAL CONFIRMATION: Sab entries delete kar dein?")) {
+            db.remove();
+        }
+    }
+}
+
+// --- REALTIME DATABASE SYNC ---
+function loadData() {
+    db.on('value', (snapshot) => {
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+        
+        let tPrice = 0, tPaid = 0, tBal = 0;
+        allData = [];
+
+        const data = snapshot.val();
+        
+        if (data) {
+            for (let id in data) {
+                const row = data[id];
+                row.id = id;
+                allData.push(row);
+
+                tPrice += row.price;
+                tPaid += row.paid;
+                tBal += row.balance;
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><small>${row.time}</small></td>
+                        <td><b>${row.item}</b></td>
+                        <td>${row.desc}</td>
+                        <td>$${row.price.toFixed(2)}</td>
+                        <td style="color:green; font-weight:bold;">$${row.paid.toFixed(2)}</td>
+                        <td style="color:red; font-weight:bold;">$${row.balance.toFixed(2)}</td>
+                        <td>
+                            <button class="edit-btn" onclick="editEntry('${id}')">✏️</button>
+                            <button class="del-btn" onclick="deleteEntry('${id}')">X</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        document.getElementById('totalPrice').innerText = `$${tPrice.toFixed(2)}`;
+        document.getElementById('totalPaid').innerText = `$${tPaid.toFixed(2)}`;
+        document.getElementById('totalBalance').innerText = `$${tBal.toFixed(2)}`;
+    });
+}
+
+// --- PDF DOWNLOAD ---
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
-    // Header
     doc.setFontSize(18);
     doc.text("Cold Store Daily Khata Balance Sheet", 14, 18);
     doc.setFontSize(10);
@@ -123,12 +210,10 @@ function downloadPDF() {
         `$${d.balance.toFixed(2)}`
     ]);
 
-    // Calculate Totals for PDF
     let totalP = allData.reduce((acc, obj) => acc + obj.price, 0);
     let totalPaid = allData.reduce((acc, obj) => acc + obj.paid, 0);
     let totalBal = allData.reduce((acc, obj) => acc + obj.balance, 0);
 
-    // Summary Row at the end
     rows.push(['TOTALS', '', '', `$${totalP.toFixed(2)}`, `$${totalPaid.toFixed(2)}`, `$${totalBal.toFixed(2)}`]);
     
     doc.autoTable({
